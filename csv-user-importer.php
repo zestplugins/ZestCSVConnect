@@ -20,6 +20,28 @@
  // Exit if accessed directly.
 defined( 'ABSPATH' ) || exit;
 
+// Define some essentials constants.
+if ( ! defined( 'ZPCC_SLUG' ) ) {
+	define( 'ZPCC_SLUG', 'zestcsvconnector' );
+	define( 'ZPCC_HANDLE', 'zestcsvconnector' );
+	define( 'ZPCC_DIR', __DIR__ );
+	define( 'ZPCC_PATH', plugin_dir_path( __FILE__ ) );
+	define( 'ZPCC_URL', plugin_dir_url( __FILE__ ) );
+	define( 'ZPCC_ASSETS_URL', ZPCC_URL . 'assets/' );
+	define( 'ZPCC_FILE', __FILE__ );
+	define( 'ZPCC_VERSION', '1.0.0' );
+	define( 'ZPCC_MIN_PHP', '5.6.0' );
+	define( 'ZPCC_MIN_WP', '6.0.0' );
+}
+
+// Include other essential constants.
+require_once ZPCC_PATH . 'includes/constants.php';
+
+// Include common global functions.
+require_once ZPCC_PATH . 'includes/functions.php';
+// Include required files.
+require_once ZPCC_PATH . 'includes/includes.php';
+
 if ( ! function_exists( 'zes_fs' ) ) {
 	// Create a helper function for easy SDK access.
 	function zes_fs() {
@@ -66,22 +88,17 @@ if ( ! function_exists( 'zes_fs' ) ) {
 }
 
 /**
- * Define the current plugin version.
- */
-define( 'ZESTCSVCONNECTOR_VERSION', '1.0' );
-
-/**
  * Add custom action link to the plugin's action links.
  *
  * @param array $links Existing plugin action links.
  * @return array Modified plugin action links.
  */
-function zest_csv_connector_management_add_actions_link( $links ) {
+function zest_csv_connector_management_plugin_listing_links( $links ) {
 	$settings_link     = '<a href="' . admin_url( 'users.php?page=csv_user_importer' ) . '">' . esc_html__( 'Settings', 'zest-csv-connector' ) . '</a>';
 	array_push( $links, $settings_link );
 	return $links;
 }
-add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), 'zest_csv_connector_management_add_actions_link' );
+add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), 'zest_csv_connector_management_plugin_listing_links' );
 
 /**
  * Redirect to the settings page after plugin activation.
