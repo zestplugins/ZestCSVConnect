@@ -17,7 +17,7 @@
  * @package ZestCsvConnector
  */
 
- // Exit if accessed directly.
+// Exit if accessed directly.
 defined( 'ABSPATH' ) || exit;
 
 // Define some essentials constants.
@@ -54,7 +54,7 @@ if ( ! function_exists( 'zes_fs' ) ) {
 			}
 
 			// Include Freemius SDK.
-			require_once dirname(__FILE__) . '/freemius/start.php';
+			require_once dirname( __FILE__) . '/freemius/start.php';
 
 			$zes_fs = fs_dynamic_init( array(
 				'id'                  => '15130',
@@ -238,7 +238,7 @@ function csv_user_importer_page() {
 		<?php endif; ?>
 
 		<script>
-			jQuery(document).ready(function($) {
+			jQuery(document).ready(function( $) {
 				$( '.nav-tab-wrapper a' ).on( 'click', function(e) {
 					e.preventDefault();
 					var tabId = $(this).attr( 'href' );
@@ -440,6 +440,7 @@ function csv_user_importer_handle_delete_users() {
 }
 add_action( 'admin_init', 'csv_user_importer_handle_delete_users' );
 
+
 /**
  * Register the plugin's submenu item for managing features.
  */
@@ -447,7 +448,7 @@ function zest_csv_connector_features_submenu() {
 	add_submenu_page(
 		'users.php',
 		esc_html__( 'Zest CSV Connector Features', 'zest-csv-connector' ),
-		esc_html__( 'Zest CSV Connector Features', 'zest-csv-connector' ),
+		esc_html__( 'Features', 'zest-csv-connector' ),
 		'manage_options',
 		'csv_features_settings',
 		'csv_features_settings_page'
@@ -459,40 +460,84 @@ add_action( 'admin_menu', 'zest_csv_connector_features_submenu' );
  * Settings page for managing features.
  */
 function csv_features_settings_page() {
-	if ( isset( $_POST['update_features'] ) ) {
-		// Update feature settings.
-		update_option( 'zest_csv_import_enabled', isset( $_POST['import_enabled'] ) ? 1 : 0 );
-		update_option( 'zest_csv_export_enabled', isset( $_POST['export_enabled'] ) ? 1 : 0 );
-		update_option( 'zest_csv_delete_enabled', isset( $_POST['delete_enabled'] ) ? 1 : 0 );
-	}
-
-	// Retrieve feature settings.
-	$import_enabled = get_option( 'zest_csv_import_enabled', 1 );
-	$export_enabled = get_option( 'zest_csv_export_enabled', 1 );
-	$delete_enabled = get_option( 'zest_csv_delete_enabled', 1 );
+	$features_table = new Zest_CSV_Connector_Features_List_Table();
+	$features_table->prepare_items();
 	?>
 	<div class="wrap">
 		<h1><?php esc_html_e( 'Zest CSV Connector Features', 'zest-csv-connector' ); ?></h1>
-		<form method="post">
-			<table class="form-table">
-				<tr>
-					<th scope="row"><?php esc_html_e( 'Import Users', 'zest-csv-connector' ); ?></th>
-					<td><input type="checkbox" name="import_enabled" <?php checked( $import_enabled, 1 ); ?>></td>
-				</tr>
-				<tr>
-					<th scope="row"><?php esc_html_e( 'Export Users', 'zest-csv-connector' ); ?></th>
-					<td><input type="checkbox" name="export_enabled" <?php checked( $export_enabled, 1 ); ?>></td>
-				</tr>
-				<tr>
-					<th scope="row"><?php esc_html_e( 'Delete Users', 'zest-csv-connector' ); ?></th>
-					<td><input type="checkbox" name="delete_enabled" <?php checked( $delete_enabled, 1 ); ?>></td>
-				</tr>
-			</table>
-			<?php submit_button( esc_html__( 'Update Features', 'zest-csv-connector' ), 'primary', 'update_features' ); ?>
-		</form>
+		<?php $features_table->display(); ?>
 	</div>
+	<script>
+		document.addEventListener('DOMContentLoaded', function() {
+			document.querySelectorAll('.feature-toggle').forEach(function(button) {
+				button.addEventListener('click', function() {
+					var feature = this.dataset.feature;
+					var action = this.textContent.trim().toLowerCase();
+					var data = {
+						action: 'toggle_feature',
+						feature: feature,
+						enable: action === 'enable' ? '1' : '0',
+						nonce: '<?php echo wp_create_nonce('toggle-feature-nonce'); ?>'
+					};
+					fetch(ajaxurl, {
+						method: 'POST',
+						body: new URLSearchParams(data),
+						headers: {
+							'Content-Type': 'application/x-www-form-urlencoded'
+						}
+					}).then(function(response) {
+						if (response.ok) {
+							return response.json();
+						}
+						throw new Error('Network response was not ok.');
+					}).then(function(data) {
+						if (data.success) {
+							window.location.reload();
+						} else {
+							console.error(data.message);
+						}
+					}).catch(function(error) {
+						console.error('There was a problem with the fetch operation:', error.message);
+					});
+				});
+			});
+		});
+	</script>
 	<?php
 }
+
+/**
+ * AJAX handler for toggling feature status
+ */
+function toggle_feature_status() {
+	if ( ! isset( $_POST['nonce'] ) || ! wp_verify_nonce( $_POST['nonce'], 'toggle-feature-nonce' ) ) {
+		wp_send_json_error( __( 'Invalid nonce', 'zest-csv-connector' ) );
+	}
+
+	$feature = isset( $_POST['feature'] ) ? sanitize_key( $_POST['feature'] ) : '';
+	$enable = isset( $_POST['enable'] ) ? intval( $_POST['enable'] ) : 0;
+
+	if ( empty( $feature ) ) {
+		wp_send_json_error( __( 'Invalid feature name', 'zest-csv-connector' ) );
+	}
+
+	// Toggle feature status.
+	switch ( $feature ) {
+		case 'import':
+			update_option( 'zest_csv_import_enabled', $enable );
+			break;
+		case 'export':
+			update_option( 'zest_csv_export_enabled', $enable );
+			break;
+		case 'delete':
+			update_option( 'zest_csv_delete_enabled', $enable );
+			break;
+		// Add more feature toggling logic as needed.
+	}
+
+	wp_send_json_success( __( 'Feature status updated successfully', 'zest-csv-connector' ) );
+}
+add_action( 'wp_ajax_toggle_feature', 'toggle_feature_status' );
 
 /**
  * Check if import feature is enabled.
