@@ -94,6 +94,18 @@ if ( ! function_exists( 'zes_fs' ) ) {
  * @return array Modified plugin action links.
  */
 function zest_csv_connector_management_plugin_listing_links( $links ) {
+	if ( zest_csv_import_enabled() ) {
+		$import_link = '<a href="' . admin_url( 'users.php?page=csv_user_importer' ) . '">' . esc_html__( 'Import', 'zest-csv-connector' ) . '</a>';
+		$links[] = $import_link;
+	}
+	if ( zest_csv_export_enabled() ) {
+		$export_link = '<a href="' . admin_url( 'users.php?page=csv_user_importer&tab=export-tab' ) . '">' . esc_html__( 'Export', 'zest-csv-connector' ) . '</a>';
+		$links[] = $export_link;
+	}
+	if ( zest_csv_delete_enabled() ) {
+		$delete_link = '<a href="' . admin_url( 'users.php?page=csv_user_importer&tab=delete-tab' ) . '">' . esc_html__( 'Delete', 'zest-csv-connector' ) . '</a>';
+		$links[] = $delete_link;
+	}
 	$settings_link     = '<a href="' . admin_url( 'users.php?page=csv_user_importer' ) . '">' . esc_html__( 'Settings', 'zest-csv-connector' ) . '</a>';
 	array_push( $links, $settings_link );
 	return $links;
@@ -143,75 +155,87 @@ function csv_user_importer_page() {
 	?>
 	<div class="wrap">
 		<h1 class="nav-tab-wrapper">
-			<a href="#import-tab" class="nav-tab nav-tab-active"><?php esc_html_e( 'Import', 'zest-csv-connector' ); ?></a>
-			<a href="#export-tab" class="nav-tab"><?php esc_html_e( 'Export', 'zest-csv-connector' ); ?></a>
-			<a href="#delete-tab"	class="nav-tab"><?php esc_html_e( 'Delete', 'zest-csv-connector' ); ?></a>
+			<?php if ( zest_csv_import_enabled() ) : ?>
+				<a href="#import-tab" class="nav-tab nav-tab-active"><?php esc_html_e( 'Import', 'zest-csv-connector' ); ?></a>
+			<?php endif; ?>
+			<?php if ( zest_csv_export_enabled() ) : ?>
+				<a href="#export-tab" class="nav-tab"><?php esc_html_e( 'Export', 'zest-csv-connector' ); ?></a>
+			<?php endif; ?>
+			<?php if ( zest_csv_delete_enabled() ) : ?>
+				<a href="#delete-tab" class="nav-tab"><?php esc_html_e( 'Delete', 'zest-csv-connector' ); ?></a>
+			<?php endif; ?>
 		</h1>
 
-		<div id="import-tab" class="tab-content">
-			<form method="post" enctype="multipart/form-data">
-				<h2><?php esc_html_e( 'Import Users', 'zest-csv-connector' ); ?></h2>
-				<?php wp_nonce_field( 'import_users_action', 'import_users_nonce' ); ?>
-				<input type="file" name="csv_file" required>
-				<p><?php esc_html_e( 'Specify the column number for each user information used in the CSV file starting from 1:', 'zest-csv-connector' ); ?></p>
-				<table class="form-table">
-					<tr>
-						<th scope="row"><?php esc_html_e( 'Username:', 'zest-csv-connector' ); ?></th>
-						<td><input type="number" name="username_column" min="1" required placeholder="Column number e.g 1"></td>
-					</tr>
-					<tr>
-						<th scope="row"><?php esc_html_e( 'Email:', 'zest-csv-connector' ); ?></th>
-						<td><input type="number" name="email_column" min="1" required placeholder="Column number e.g 2"></td>
-					</tr>
-					<tr>
-						<th scope="row"><?php esc_html_e( 'First Name:', 'zest-csv-connector' ); ?></th>
-						<td><input type="number" name="first_name_column" min="1" placeholder="Column number e.g 3"></td>
-					</tr>
-					<tr>
-						<th scope="row"><?php esc_html_e( 'Last Name:', 'zest-csv-connector' ); ?></th>
-						<td><input type="number" name="last_name_column" min="1" placeholder="Column number e.g 4"></td>
-					</tr>
-					<tr>
-						<th scope="row"><?php esc_html_e( 'Website:', 'zest-csv-connector' ); ?></th>
-						<td><input type="number" name="website_column" min="1" placeholder="Column number e.g 5"></td>
-					</tr>
-					<tr>
-						<th scope="row"><?php esc_html_e( 'Role:', 'zest-csv-connector' ); ?></th>
-						<td><input type="number" name="role_column" min="1" placeholder="Column number e.g 6"></td>
-					</tr>
-				</table>
-				<p><input type="checkbox" name="has_header" id="has_header"> <label for="has_header"><?php esc_html_e( 'CSV file has header (skips the first row)', 'zest-csv-connector' ); ?></label></p>
-				<p><input type="checkbox" name="disable_existing_users" id="disable_existing_users"> <label for="disable_existing_users"><?php esc_html_e( 'Do not update existing users', 'zest-csv-connector' ); ?></label></p>
-				<input type="submit" name="import_users" class="button button-primary" value="Import">
-			</form>
-		</div>
+		<?php if ( zest_csv_import_enabled() ) : ?>
+			<div id="import-tab" class="tab-content">
+				<form method="post" enctype="multipart/form-data">
+					<h2><?php esc_html_e( 'Import Users', 'zest-csv-connector' ); ?></h2>
+					<?php wp_nonce_field( 'import_users_action', 'import_users_nonce' ); ?>
+					<input type="file" name="csv_file" required>
+					<p><?php esc_html_e( 'Specify the column number for each user information used in the CSV file starting from 1:', 'zest-csv-connector' ); ?></p>
+					<table class="form-table">
+						<tr>
+							<th scope="row"><?php esc_html_e( 'Username:', 'zest-csv-connector' ); ?></th>
+							<td><input type="number" name="username_column" min="1" required placeholder="Column number e.g 1"></td>
+						</tr>
+						<tr>
+							<th scope="row"><?php esc_html_e( 'Email:', 'zest-csv-connector' ); ?></th>
+							<td><input type="number" name="email_column" min="1" required placeholder="Column number e.g 2"></td>
+						</tr>
+						<tr>
+							<th scope="row"><?php esc_html_e( 'First Name:', 'zest-csv-connector' ); ?></th>
+							<td><input type="number" name="first_name_column" min="1" placeholder="Column number e.g 3"></td>
+						</tr>
+						<tr>
+							<th scope="row"><?php esc_html_e( 'Last Name:', 'zest-csv-connector' ); ?></th>
+							<td><input type="number" name="last_name_column" min="1" placeholder="Column number e.g 4"></td>
+						</tr>
+						<tr>
+							<th scope="row"><?php esc_html_e( 'Website:', 'zest-csv-connector' ); ?></th>
+							<td><input type="number" name="website_column" min="1" placeholder="Column number e.g 5"></td>
+						</tr>
+						<tr>
+							<th scope="row"><?php esc_html_e( 'Role:', 'zest-csv-connector' ); ?></th>
+							<td><input type="number" name="role_column" min="1" placeholder="Column number e.g 6"></td>
+						</tr>
+					</table>
+					<p><input type="checkbox" name="has_header" id="has_header"> <label for="has_header"><?php esc_html_e( 'CSV file has header (skips the first row)', 'zest-csv-connector' ); ?></label></p>
+					<p><input type="checkbox" name="disable_existing_users" id="disable_existing_users"> <label for="disable_existing_users"><?php esc_html_e( 'Do not update existing users', 'zest-csv-connector' ); ?></label></p>
+					<input type="submit" name="import_users" class="button button-primary" value="Import">
+				</form>
+			</div>
+		<?php endif; ?>
 
-		<div id="export-tab" class="tab-content" style="display: none;">
-			<h2><?php esc_html_e( 'Export Users', 'zest-csv-connector' ); ?></h2>
-			<p><?php esc_html_e( 'Click the button below to export all users as a CSV file.', 'zest-csv-connector' ); ?></p>
-			<a href="<?php echo esc_url( admin_url( 'admin-post.php?action=export_users' ) ); ?>" class="button button-primary"><?php esc_html_e( 'Export', 'zest-csv-connector' ); ?></a>
-		</div>
+		<?php if ( zest_csv_export_enabled() ) : ?>
+			<div id="export-tab" class="tab-content" style="display: none;">
+				<h2><?php esc_html_e( 'Export Users', 'zest-csv-connector' ); ?></h2>
+				<p><?php esc_html_e( 'Click the button below to export all users as a CSV file.', 'zest-csv-connector' ); ?></p>
+				<a href="<?php echo esc_url( admin_url( 'admin-post.php?action=export_users' ) ); ?>" class="button button-primary"><?php esc_html_e( 'Export', 'zest-csv-connector' ); ?></a>
+			</div>
+		<?php endif; ?>
 
-		<div id="delete-tab" class="tab-content" style="display: none;">
-			<h2><?php esc_html_e( 'Delete Users', 'zest-csv-connector' ); ?></h2>
-			<form method="post" enctype="multipart/form-data">
+		<?php if ( zest_csv_delete_enabled() ) : ?>
+			<div id="delete-tab" class="tab-content" style="display: none;">
 				<h2><?php esc_html_e( 'Delete Users', 'zest-csv-connector' ); ?></h2>
-				<?php wp_nonce_field( 'delete_users_action', 'delete_users_nonce' ); ?>
-				<p>
-					<label for="csv_file"><?php esc_html_e( 'CSV File:', 'zest-csv-connector' ); ?></label>
-					<input type="file" name="csv_file" id="csv_file">
-				</p>
-				<p>
-					<label for="username_column"><?php esc_html_e( 'Username Column:', 'zest-csv-connector' ); ?></label>
-					<input type="number" name="username_column" id="username_column" min="1">
-				</p>
-				<p>
-					<input type="checkbox" name="has_header" id="has_header">
-					<label for="has_header"><?php esc_html_e( 'CSV has header row', 'zest-csv-connector' ); ?></label>
-				</p>
-				<p><input type="submit" name="submit" class="button button-primary" value="Delete Users"></p>
-			</form>
-		</div>
+				<form method="post" enctype="multipart/form-data">
+					<h2><?php esc_html_e( 'Delete Users', 'zest-csv-connector' ); ?></h2>
+					<?php wp_nonce_field( 'delete_users_action', 'delete_users_nonce' ); ?>
+					<p>
+						<label for="csv_file"><?php esc_html_e( 'CSV File:', 'zest-csv-connector' ); ?></label>
+						<input type="file" name="csv_file" id="csv_file">
+					</p>
+					<p>
+						<label for="username_column"><?php esc_html_e( 'Username Column:', 'zest-csv-connector' ); ?></label>
+						<input type="number" name="username_column" id="username_column" min="1">
+					</p>
+					<p>
+						<input type="checkbox" name="has_header" id="has_header">
+						<label for="has_header"><?php esc_html_e( 'CSV has header row', 'zest-csv-connector' ); ?></label>
+					</p>
+					<p><input type="submit" name="submit" class="button button-primary" value="Delete Users"></p>
+				</form>
+			</div>
+		<?php endif; ?>
 
 		<script>
 			jQuery(document).ready(function($) {
@@ -224,8 +248,8 @@ function csv_user_importer_page() {
 					$(tabId).show();
 				});
 
-				// Show the Import tab by default
-				$( '#import-tab' ).show();
+				// Show the first available tab by default
+				$( '.nav-tab-wrapper a:first-of-type' ).click();
 			});
 		</script>
 
@@ -415,3 +439,84 @@ function csv_user_importer_handle_delete_users() {
 	}
 }
 add_action( 'admin_init', 'csv_user_importer_handle_delete_users' );
+
+/**
+ * Register the plugin's submenu item for managing features.
+ */
+function zest_csv_connector_features_submenu() {
+	add_submenu_page(
+		'users.php',
+		esc_html__( 'Zest CSV Connector Features', 'zest-csv-connector' ),
+		esc_html__( 'Zest CSV Connector Features', 'zest-csv-connector' ),
+		'manage_options',
+		'csv_features_settings',
+		'csv_features_settings_page'
+	);
+}
+add_action( 'admin_menu', 'zest_csv_connector_features_submenu' );
+
+/**
+ * Settings page for managing features.
+ */
+function csv_features_settings_page() {
+	if ( isset( $_POST['update_features'] ) ) {
+		// Update feature settings.
+		update_option( 'zest_csv_import_enabled', isset( $_POST['import_enabled'] ) ? 1 : 0 );
+		update_option( 'zest_csv_export_enabled', isset( $_POST['export_enabled'] ) ? 1 : 0 );
+		update_option( 'zest_csv_delete_enabled', isset( $_POST['delete_enabled'] ) ? 1 : 0 );
+	}
+
+	// Retrieve feature settings.
+	$import_enabled = get_option( 'zest_csv_import_enabled', 1 );
+	$export_enabled = get_option( 'zest_csv_export_enabled', 1 );
+	$delete_enabled = get_option( 'zest_csv_delete_enabled', 1 );
+	?>
+	<div class="wrap">
+		<h1><?php esc_html_e( 'Zest CSV Connector Features', 'zest-csv-connector' ); ?></h1>
+		<form method="post">
+			<table class="form-table">
+				<tr>
+					<th scope="row"><?php esc_html_e( 'Import Users', 'zest-csv-connector' ); ?></th>
+					<td><input type="checkbox" name="import_enabled" <?php checked( $import_enabled, 1 ); ?>></td>
+				</tr>
+				<tr>
+					<th scope="row"><?php esc_html_e( 'Export Users', 'zest-csv-connector' ); ?></th>
+					<td><input type="checkbox" name="export_enabled" <?php checked( $export_enabled, 1 ); ?>></td>
+				</tr>
+				<tr>
+					<th scope="row"><?php esc_html_e( 'Delete Users', 'zest-csv-connector' ); ?></th>
+					<td><input type="checkbox" name="delete_enabled" <?php checked( $delete_enabled, 1 ); ?>></td>
+				</tr>
+			</table>
+			<?php submit_button( esc_html__( 'Update Features', 'zest-csv-connector' ), 'primary', 'update_features' ); ?>
+		</form>
+	</div>
+	<?php
+}
+
+/**
+ * Check if import feature is enabled.
+ *
+ * @return bool Whether import feature is enabled.
+ */
+function zest_csv_import_enabled() {
+	return (bool) get_option( 'zest_csv_import_enabled', 1 );
+}
+
+/**
+ * Check if export feature is enabled.
+ *
+ * @return bool Whether export feature is enabled.
+ */
+function zest_csv_export_enabled() {
+	return (bool) get_option( 'zest_csv_export_enabled', 1 );
+}
+
+/**
+ * Check if delete feature is enabled.
+ *
+ * @return bool Whether delete feature is enabled.
+ */
+function zest_csv_delete_enabled() {
+	return (bool) get_option( 'zest_csv_delete_enabled', 1 );
+}
