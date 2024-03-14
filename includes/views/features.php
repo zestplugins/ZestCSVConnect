@@ -52,22 +52,25 @@ class Zest_CSV_Connector_Features_List_Table extends WP_List_Table {
 	 * Retrieve feature data
 	 */
 	private function feature_data() {
-		// Retrieve feature settings.
+		// Retrieve feature settings with documentation links.
 		$features = array(
 			array(
 				'name'          => 'import',
 				'description'   => __( 'Import Users using CSV files', 'zest-csv-connector' ),
 				'enabled'       => zest_csv_import_enabled(),
+				'documentation' => 'http://zestplugins.com/how-to-import-wordpress-users-zestcsvconnect/',
 			),
 			array(
 				'name'          => 'export',
 				'description'   => __( 'Export Users to CSV files', 'zest-csv-connector' ),
 				'enabled'       => zest_csv_export_enabled(),
+				'documentation' => 'https://example.com/export-documentation',
 			),
 			array(
 				'name'          => 'delete',
 				'description'   => __( 'Delete Users using CSV files', 'zest-csv-connector' ),
 				'enabled'       => zest_csv_delete_enabled(),
+				'documentation' => 'https://example.com/delete-documentation',
 			),
 			// Add more features as needed.
 		);
@@ -80,17 +83,26 @@ class Zest_CSV_Connector_Features_List_Table extends WP_List_Table {
 	 */
 	public function column_name( $item ) {
 		$actions = array(
-			'toggle' => sprintf( '<button class="feature-toggle" data-feature="%s">%s</button>', $item['name'], $item['enabled'] ? __( 'Disable', 'zest-csv-connector' ) : __( 'Enable', 'zest-csv-connector' ) ),
+			'toggle' => sprintf( '<a class="feature-toggle" data-feature="%s">%s</a>', $item['name'], $item['enabled'] ? __( 'Deactivate', 'zest-csv-connector' ) : __( 'Activate', 'zest-csv-connector' ) ),
 		);
 
 		return sprintf( '%1$s %2$s', $item['name'], $this->row_actions( $actions ) );
 	}
 
 	/**
-	 * Render the feature description column.
+	 * Render the feature description column with "View Documentation" link.
 	 */
 	public function column_description( $item ) {
-		return $item['description'];
+		$description = $item['description'];
+		$documentation_link = isset( $item['documentation'] ) ? $item['documentation'] : '';
+
+		// Render the description with documentation link.
+		$output = $description;
+		if ( ! empty( $documentation_link ) ) {
+			$output .= '<br><a href="' . esc_url( $documentation_link ) . '" target="_blank">' . __( 'View Documentation', 'zest-csv-connector' ) . '</a>';
+		}
+
+		return $output;
 	}
 
 	/**
