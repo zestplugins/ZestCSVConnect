@@ -27,7 +27,7 @@ if ( ! class_exists( 'ZyncMenu' ) ) {
 				__( 'Zync', 'Zync' ),
 				'manage_options',
 				'zync_menu',
-				'csv_user_importer_page',
+				'zync_user_manager_page',
 				'dashicons-admin-users'
 			);
 			add_submenu_page(
@@ -35,8 +35,8 @@ if ( ! class_exists( 'ZyncMenu' ) ) {
 				__( 'Features', 'zesthours' ),
 				__( 'Features', 'zesthours' ),
 				'manage_options',
-				'csv_features_settings',
-				'csv_features_settings_page'
+				'zync_features',
+				'zync_features_page'
 			);
 			remove_submenu_page( 'zync_menu', 'zync_menu' );
 			add_submenu_page(
@@ -44,8 +44,8 @@ if ( ! class_exists( 'ZyncMenu' ) ) {
 				esc_html__( 'Zync users', 'zync' ),
 				esc_html__( 'Zync users', 'zync' ),
 				'manage_options',
-				'csv_user_importer',
-				'csv_user_importer_page'
+				'zync_user_manager',
+				'zync_user_manager_page'
 			);
 		}
 	}

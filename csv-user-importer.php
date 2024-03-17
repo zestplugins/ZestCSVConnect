@@ -72,7 +72,7 @@ if ( ! function_exists( 'zes_fs' ) ) {
 					'is_require_payment' => false,
 				),
 				'menu'                => array(
-					'first-path'     => 'users.php?page=csv_user_importer',
+					'first-path'     => 'users.php?page=zync_user_manager',
 					'support'        => false,
 				),
 			) );
@@ -95,18 +95,18 @@ if ( ! function_exists( 'zes_fs' ) ) {
  */
 function zest_csv_connector_management_plugin_listing_links( $links ) {
 	if ( zest_csv_import_enabled() ) {
-		$import_link = '<a href="' . admin_url( 'users.php?page=csv_user_importer' ) . '">' . esc_html__( 'Import', 'zync' ) . '</a>';
+		$import_link = '<a href="' . admin_url( 'users.php?page=zync_user_manager' ) . '">' . esc_html__( 'Import', 'zync' ) . '</a>';
 		$links[] = $import_link;
 	}
 	if ( zest_csv_export_enabled() ) {
-		$export_link = '<a href="' . admin_url( 'users.php?page=csv_user_importer&tab=export-tab' ) . '">' . esc_html__( 'Export', 'zync' ) . '</a>';
+		$export_link = '<a href="' . admin_url( 'users.php?page=zync_user_manager&tab=export-tab' ) . '">' . esc_html__( 'Export', 'zync' ) . '</a>';
 		$links[] = $export_link;
 	}
 	if ( zest_csv_delete_enabled() ) {
-		$delete_link = '<a href="' . admin_url( 'users.php?page=csv_user_importer&tab=delete-tab' ) . '">' . esc_html__( 'Delete', 'zync' ) . '</a>';
+		$delete_link = '<a href="' . admin_url( 'users.php?page=zync_user_manager&tab=delete-tab' ) . '">' . esc_html__( 'Delete', 'zync' ) . '</a>';
 		$links[] = $delete_link;
 	}
-	$settings_link     = '<a href="' . admin_url( 'users.php?page=csv_user_importer' ) . '">' . esc_html__( 'Settings', 'zync' ) . '</a>';
+	$settings_link     = '<a href="' . admin_url( 'users.php?page=zync_user_manager' ) . '">' . esc_html__( 'Settings', 'zync' ) . '</a>';
 	array_push( $links, $settings_link );
 	return $links;
 }
@@ -118,7 +118,7 @@ add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), 'zest_csv_conn
 function zest_csv_connector_redirect_to_help_page() {
 	if ( is_admin() && get_option( 'zest_csv_connector_activation_redirect', false ) ) {
 		delete_option( 'zest_csv_connector_activation_redirect' );
-		wp_safe_redirect( admin_url( 'users.php?page=csv_user_importer' ) );
+		wp_safe_redirect( admin_url( 'users.php?page=zync_user_manager' ) );
 		exit;
 	}
 }
@@ -135,7 +135,7 @@ add_action( 'admin_init', 'zest_csv_connector_redirect_to_help_page' );
 /**
  * Handle user import
  */
-function csv_user_importer_handle_import() {
+function zync_user_manager_handle_import() {
 	if ( isset( $_POST['import_users'] ) && wp_verify_nonce( $_POST['import_users_nonce'], 'import_users_action' ) ) {
 		if ( empty( $_FILES['csv_file']['tmp_name'] ) ) {
 			echo '<div class="error"><p>' . esc_html__( 'Please select a CSV file to import.', 'zync' ) . '</p></div>';
@@ -220,12 +220,12 @@ function csv_user_importer_handle_import() {
 		}
 	}
 }
-add_action( 'admin_init', 'csv_user_importer_handle_import' );
+add_action( 'admin_init', 'zync_user_manager_handle_import' );
 
 /**
  * Export users as a CSV file.
  */
-function csv_user_importer_handle_export() {
+function zync_user_manager_handle_export() {
 	if ( isset( $_GET['action'] ) && 'export_users' === $_GET['action'] ) {
 		$users    = get_users();
 		$csv_data = "Username,Email,First Name,Last Name,Website,Role\n";
@@ -251,12 +251,12 @@ function csv_user_importer_handle_export() {
 		exit();
 	}
 }
-add_action( 'admin_post_export_users', 'csv_user_importer_handle_export' );
+add_action( 'admin_post_export_users', 'zync_user_manager_handle_export' );
 
 /**
- * Delete Users
+ * Delete Users.
  */
-function csv_user_importer_handle_delete_users() {
+function zync_user_manager_handle_delete_users() {
 	if ( isset( $_POST['submit'] ) && isset( $_FILES['csv_file'] ) && wp_verify_nonce( wp_unslash( $_POST['delete_users_nonce'], 'delete_users_action' ) ) ) {
 		$file = $_FILES['csv_file'];
 		$csv_file = fopen( $file['tmp_name'], 'r' );
@@ -313,7 +313,7 @@ function csv_user_importer_handle_delete_users() {
 		}
 	}
 }
-add_action( 'admin_init', 'csv_user_importer_handle_delete_users' );
+add_action( 'admin_init', 'zync_user_manager_handle_delete_users' );
 
 /**
  * AJAX handler for toggling feature status

@@ -3,7 +3,7 @@
 /**
  * Settings page for managing features.
  */
-function csv_features_settings_page() {
+function zync_features_page() {
 	$features_table = new Zest_CSV_Connector_Features_List_Table();
 	$features_table->prepare_items();
 	?>
@@ -80,7 +80,7 @@ function zest_csv_delete_enabled() {
 /**
  * Main page of the plugin
  */
-function csv_user_importer_page() {
+function zync_user_manager_page() {
 	?>
 	<div class="wrap">
 		<h1 class="nav-tab-wrapper">
