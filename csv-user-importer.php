@@ -6,7 +6,7 @@
  * Tags:  import, export, users, csv export, csv import, user export, user import, user management
  * Version: 1.0
  * Author: zestplugins
- * Author URI: https://zestplugins.com/
+ * Author URI: https://github.com/frenziecodes
  * License: GNU General Public License V3
  * License URI: https://www.gnu.org/licenses/gpl-3.0.html
  * Requires at least: 5.6
@@ -314,36 +314,3 @@ function zync_user_manager_handle_delete_users() {
 	}
 }
 add_action( 'admin_init', 'zync_user_manager_handle_delete_users' );
-
-/**
- * AJAX handler for toggling feature status
- */
-function toggle_feature_status() {
-	if ( ! isset( $_POST['nonce'] ) || ! wp_verify_nonce( $_POST['nonce'], 'toggle-feature-nonce' ) ) {
-		wp_send_json_error( __( 'Invalid nonce', 'zync' ) );
-	}
-
-	$feature = isset( $_POST['feature'] ) ? sanitize_key( $_POST['feature'] ) : '';
-	$enable  = isset( $_POST['enable'] ) ? intval( $_POST['enable'] ) : 0;
-
-	if ( empty( $feature ) ) {
-		wp_send_json_error( __( 'Invalid feature name', 'zync' ) );
-	}
-
-	// Toggle feature status.
-	switch ( $feature ) {
-		case 'import':
-			update_option( 'zync_importer_enabled', $enable );
-			break;
-		case 'export':
-			update_option( 'zest_csv_export_enabled', $enable );
-			break;
-		case 'delete':
-			update_option( 'zest_csv_delete_enabled', $enable );
-			break;
-		// Add more feature toggling logic as needed.
-	}
-
-	wp_send_json_success( __( 'Feature status updated successfully', 'zync' ) );
-}
-add_action( 'wp_ajax_toggle_feature', 'toggle_feature_status' );
