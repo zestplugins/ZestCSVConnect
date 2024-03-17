@@ -4,6 +4,7 @@ if ( ! class_exists( 'WP_List_Table' ) ) {
 }
 
 class Zest_CSV_Connector_Features_List_Table extends WP_List_Table {
+
 	/**
 	 * Prepare the feature items for the table
 	 */
@@ -40,9 +41,9 @@ class Zest_CSV_Connector_Features_List_Table extends WP_List_Table {
 	public function get_columns() {
 		$columns = array(
 			'cb'            => '<input type="checkbox" />',
-			'name'          => __( 'Name', 'zest-csv-connector' ),
-			'description'   => __( 'Description', 'zest-csv-connector' ),
-			'enabled'       => __( 'Status', 'zest-csv-connector' ),
+			'name'          => __( 'Name', 'zync' ),
+			'description'   => __( 'Description', 'zync' ),
+			'enabled'       => __( 'Status', 'zync' ),
 		);
 
 		return $columns;
@@ -56,24 +57,24 @@ class Zest_CSV_Connector_Features_List_Table extends WP_List_Table {
 		$features = array(
 			array(
 				'name'          => 'import',
-				'description'   => __( 'Import Users using CSV files', 'zest-csv-connector' ),
+				'description'   => __( 'Import Users using CSV files', 'zync' ),
 				'enabled'       => zest_csv_import_enabled(),
 				'link'          => 'http://zestplugins.com/how-to-import-wordpress-users-zestcsvconnect/',
-				'link_text'     => __( 'see documentation', 'zest-csv-connector' ),
+				'link_text'     => __( 'see documentation', 'zync' ),
 			),
 			array(
 				'name'          => 'export',
-				'description'   => __( 'Export Users to CSV files', 'zest-csv-connector' ),
+				'description'   => __( 'Export Users to CSV files', 'zync' ),
 				'enabled'       => zest_csv_export_enabled(),
 				'link'          => 'https://example.com/export-documentation',
-				'link_text'     => __( 'see documentation', 'zest-csv-connector' ),
+				'link_text'     => __( 'see documentation', 'zync' ),
 			),
 			array(
 				'name'          => 'delete',
-				'description'   => __( 'Delete Users using CSV files', 'zest-csv-connector' ),
+				'description'   => __( 'Delete Users using CSV files', 'zync' ),
 				'enabled'       => zest_csv_delete_enabled(),
 				'link'          => 'https://example.com/delete-documentation',
-				'link_text'     => __( 'see documentation', 'zest-csv-connector' ),
+				'link_text'     => __( 'see documentation', 'zync' ),
 			),
 			// Add more features as needed.
 		);
@@ -86,7 +87,7 @@ class Zest_CSV_Connector_Features_List_Table extends WP_List_Table {
 	 */
 	public function column_name( $item ) {
 		$actions = array(
-			'toggle' => sprintf( '<a class="feature-toggle" data-feature="%s">%s</a>', $item['name'], $item['enabled'] ? __( 'Deactivate', 'zest-csv-connector' ) : __( 'Activate', 'zest-csv-connector' ) ),
+			'toggle' => sprintf( '<a class="feature-toggle" data-feature="%s">%s</a>', $item['name'], $item['enabled'] ? __( 'Deactivate', 'zync' ) : __( 'Activate', 'zync' ) ),
 		);
 
 		return sprintf( '%1$s %2$s', $item['name'], $this->row_actions( $actions ) );
@@ -113,6 +114,6 @@ class Zest_CSV_Connector_Features_List_Table extends WP_List_Table {
 	 * Render the feature status column.
 	 */
 	public function column_enabled( $item ) {
-		return $item['enabled'] ? __( 'Enabled', 'zest-csv-connector' ) : __( 'Disabled', 'zest-csv-connector' );
+		return $item['enabled'] ? __( 'Enabled', 'zync' ) : __( 'Disabled', 'zync' );
 	}
 }
