@@ -55,8 +55,8 @@ function zync_features_page() {
  *
  * @return bool Whether import feature is enabled.
  */
-function zest_csv_import_enabled() {
-	return (bool) get_option( 'zest_csv_import_enabled', 1 );
+function zync_importer_enabled() {
+	return (bool) get_option( 'zync_importer_enabled', 1 );
 }
 
 /**
@@ -84,7 +84,7 @@ function zync_user_manager_page() {
 	?>
 	<div class="wrap">
 		<h1 class="nav-tab-wrapper">
-			<?php if ( zest_csv_import_enabled() ) : ?>
+			<?php if ( zync_importer_enabled() ) : ?>
 				<a href="#import-tab" class="nav-tab nav-tab-active"><?php esc_html_e( 'Import', 'zync' ); ?></a>
 			<?php endif; ?>
 			<?php if ( zest_csv_export_enabled() ) : ?>
@@ -95,7 +95,7 @@ function zync_user_manager_page() {
 			<?php endif; ?>
 		</h1>
 
-		<?php if ( zest_csv_import_enabled() ) : ?>
+		<?php if ( zync_importer_enabled() ) : ?>
 			<div id="import-tab" class="tab-content">
 				<form method="post" enctype="multipart/form-data">
 					<h2><?php esc_html_e( 'Import Users', 'zync' ); ?></h2>

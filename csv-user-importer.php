@@ -94,7 +94,7 @@ if ( ! function_exists( 'zes_fs' ) ) {
  * @return array Modified plugin action links.
  */
 function zest_csv_connector_management_plugin_listing_links( $links ) {
-	if ( zest_csv_import_enabled() ) {
+	if ( zync_importer_enabled() ) {
 		$import_link = '<a href="' . admin_url( 'users.php?page=zync_user_manager' ) . '">' . esc_html__( 'Import', 'zync' ) . '</a>';
 		$links[] = $import_link;
 	}
@@ -324,7 +324,7 @@ function toggle_feature_status() {
 	}
 
 	$feature = isset( $_POST['feature'] ) ? sanitize_key( $_POST['feature'] ) : '';
-	$enable = isset( $_POST['enable'] ) ? intval( $_POST['enable'] ) : 0;
+	$enable  = isset( $_POST['enable'] ) ? intval( $_POST['enable'] ) : 0;
 
 	if ( empty( $feature ) ) {
 		wp_send_json_error( __( 'Invalid feature name', 'zync' ) );
@@ -333,7 +333,7 @@ function toggle_feature_status() {
 	// Toggle feature status.
 	switch ( $feature ) {
 		case 'import':
-			update_option( 'zest_csv_import_enabled', $enable );
+			update_option( 'zync_importer_enabled', $enable );
 			break;
 		case 'export':
 			update_option( 'zest_csv_export_enabled', $enable );

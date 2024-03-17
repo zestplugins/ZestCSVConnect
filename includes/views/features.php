@@ -1,8 +1,14 @@
 <?php
+defined( 'ABSPATH' ) || exit;
+
 if ( ! class_exists( 'WP_List_Table' ) ) {
 	require_once ABSPATH . 'wp-admin/includes/class-wp-list-table.php';
 }
-
+/**
+ * Class Zest_CSV_Connector_Features_List_Table
+ *
+ * This class extends WP_List_Table to display a list table of features.
+ */
 class Zest_CSV_Connector_Features_List_Table extends WP_List_Table {
 
 	/**
@@ -10,8 +16,8 @@ class Zest_CSV_Connector_Features_List_Table extends WP_List_Table {
 	 */
 	public function prepare_items() {
 		// Define feature columns.
-		$columns = $this->get_columns();
-		$hidden = array();
+		$columns  = $this->get_columns();
+		$hidden   = array();
 		$sortable = $this->get_sortable_columns();
 
 		// Populate feature items.
@@ -40,10 +46,10 @@ class Zest_CSV_Connector_Features_List_Table extends WP_List_Table {
 	 */
 	public function get_columns() {
 		$columns = array(
-			'cb'            => '<input type="checkbox" />',
-			'name'          => __( 'Name', 'zync' ),
-			'description'   => __( 'Description', 'zync' ),
-			'enabled'       => __( 'Status', 'zync' ),
+			'cb'           => '<input type="checkbox" />',
+			'name'         => __( 'Name', 'zync' ),
+			'description'  => __( 'Description', 'zync' ),
+			'enabled'      => __( 'Status', 'zync' ),
 		);
 
 		return $columns;
@@ -58,7 +64,7 @@ class Zest_CSV_Connector_Features_List_Table extends WP_List_Table {
 			array(
 				'name'          => 'import',
 				'description'   => __( 'Import Users using CSV files', 'zync' ),
-				'enabled'       => zest_csv_import_enabled(),
+				'enabled'       => zync_importer_enabled(),
 				'link'          => 'http://zestplugins.com/how-to-import-wordpress-users-zestcsvconnect/',
 				'link_text'     => __( 'see documentation', 'zync' ),
 			),
@@ -84,6 +90,8 @@ class Zest_CSV_Connector_Features_List_Table extends WP_List_Table {
 
 	/**
 	 * Render the feature name column.
+	 *
+	 * @param array $item The current item being rendered.
 	 */
 	public function column_name( $item ) {
 		$actions = array(
@@ -95,11 +103,13 @@ class Zest_CSV_Connector_Features_List_Table extends WP_List_Table {
 
 	/**
 	 * Render the feature description column with link.
+	 *
+	 * @param array $item The current item being rendered.
 	 */
 	public function column_description( $item ) {
 		$description = $item['description'];
-		$link = isset( $item['link'] ) ? $item['link'] : '';
-		$link_text = isset( $item['link_text'] ) ? $item['link_text'] : '';
+		$link        = isset( $item['link'] ) ? $item['link'] : '';
+		$link_text   = isset( $item['link_text'] ) ? $item['link_text'] : '';
 
 		// Render the description with link.
 		$output = $description;
@@ -112,6 +122,8 @@ class Zest_CSV_Connector_Features_List_Table extends WP_List_Table {
 
 	/**
 	 * Render the feature status column.
+	 *
+	 * @param array $item The current item being rendered.
 	 */
 	public function column_enabled( $item ) {
 		return $item['enabled'] ? __( 'Enabled', 'zync' ) : __( 'Disabled', 'zync' );
