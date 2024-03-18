@@ -47,6 +47,14 @@ if ( ! class_exists( 'ZyncMenu' ) ) {
 				'zync_user_manager',
 				'zync_user_manager_page'
 			);
+			add_submenu_page(
+				'zync_menu',
+				__( 'Settings', 'zesthours' ),
+				__( 'Settings', 'zesthours' ),
+				'manage_options',
+				'zync_settings',
+				'zync_settings_page'
+			);
 		}
 	}
 }

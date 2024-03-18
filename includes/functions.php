@@ -185,3 +185,14 @@ function zync_user_manager_page() {
 	</div>
 	<?php
 }
+
+/**
+ * Settings page of the plugin
+ */
+function zync_settings_page() {
+	?>
+		<div>
+			<h2><?php esc_html_e( 'Zync settings', 'zync' ); ?></h2>
+		</div>
+	<?php
+}
