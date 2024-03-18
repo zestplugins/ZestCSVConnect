@@ -26,19 +26,19 @@ if ( ! class_exists( 'ZyncMenu' ) ) {
 				__( 'Zync', 'Zync' ),
 				__( 'Zync', 'Zync' ),
 				'manage_options',
-				'zync_menu',
+				'zync',
 				'zync_user_manager_page',
 				'dashicons-admin-users'
 			);
 			add_submenu_page(
-				'zync_menu',
+				'zync',
 				__( 'Features', 'zesthours' ),
 				__( 'Features', 'zesthours' ),
 				'manage_options',
 				'zync_features',
 				'zync_features_page'
 			);
-			remove_submenu_page( 'zync_menu', 'zync_menu' );
+			remove_submenu_page( 'zync', 'zync' );
 			add_submenu_page(
 				'users.php',
 				esc_html__( 'Zync users', 'zync' ),
@@ -48,7 +48,7 @@ if ( ! class_exists( 'ZyncMenu' ) ) {
 				'zync_user_manager_page'
 			);
 			add_submenu_page(
-				'zync_menu',
+				'zync',
 				__( 'Settings', 'zesthours' ),
 				__( 'Settings', 'zesthours' ),
 				'manage_options',
