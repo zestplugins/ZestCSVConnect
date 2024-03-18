@@ -42,49 +42,43 @@ require_once ZYNC_PATH . 'includes/functions.php';
 // Include required files.
 require_once ZYNC_PATH . 'includes/includes.php';
 
-if ( ! function_exists( 'zes_fs' ) ) {
+if ( ! function_exists( 'zyn_fs' ) ) {
 	// Create a helper function for easy SDK access.
-	function zes_fs() {
-		global $zes_fs;
+	function zyn_fs() {
+		global $zyn_fs;
 
-		if ( ! isset( $zes_fs ) ) {
+		if ( ! isset( $zyn_fs ) ) {
 			// Activate multisite network integration.
-			if ( ! defined( 'WP_FS__PRODUCT_15130_MULTISITE' ) ) {
-				define( 'WP_FS__PRODUCT_15130_MULTISITE', true );
+			if ( ! defined( 'WP_FS__PRODUCT_15198_MULTISITE' ) ) {
+				define( 'WP_FS__PRODUCT_15198_MULTISITE', true );
 			}
 
 			// Include Freemius SDK.
-			require_once dirname( __FILE__) . '/freemius/start.php';
+			require_once dirname(__FILE__) . '/freemius/start.php';
 
-			$zes_fs = fs_dynamic_init( array(
-				'id'                  => '15130',
-				'slug'                => 'Zync',
+			$zyn_fs = fs_dynamic_init( array(
+				'id'                  => '15198',
+				'slug'                => 'zync',
 				'type'                => 'plugin',
-				'public_key'          => 'pk_1fabaf2cf4254c0722d54a41ff057',
-				'is_premium'          => true,
-				'premium_suffix'      => 'starter',
-				// If your plugin is a serviceware, set this option to false.
-				'has_premium_version' => true,
+				'public_key'          => 'pk_2f2f8e77d738d6be802a3a7d3a089',
+				'is_premium'          => false,
 				'has_addons'          => false,
-				'has_paid_plans'      => true,
-				'trial'               => array(
-					'days'               => 7,
-					'is_require_payment' => false,
-				),
+				'has_paid_plans'      => false,
 				'menu'                => array(
+					'slug'           => 'zync',
 					'first-path'     => 'users.php?page=zync_user_manager',
 					'support'        => false,
 				),
 			) );
 		}
 
-		return $zes_fs;
+		return $zyn_fs;
 	}
 
 	// Init Freemius.
-	zes_fs();
+	zyn_fs();
 	// Signal that SDK was initiated.
-	do_action( 'zes_fs_loaded' );
+	do_action( 'zyn_fs_loaded' );
 }
 
 /**
